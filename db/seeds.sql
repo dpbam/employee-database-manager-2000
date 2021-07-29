@@ -7,17 +7,17 @@ VALUES
 
 INSERT INTO employee_role (id, title, salary, department_id)
 VALUES
-    (1, "Sales Lead", 63000.00, 100),
-    (2, "Salesperson", 47000.00, 101),
-    (3, "Lead Engineer", 71000.00, 102),
-    (4, "Software Engineer", 48000.00, 103),
-    (5, "Accountant", 57000.00, 104),
-    (6, "Lawyer", 119000.00, 105),
-    (7, "Legal Team Lead", 141000, 106);
+    (1, "Sales Lead", 63000.00, 1),
+    (2, "Salesperson", 47000.00, 1),
+    (3, "Lead Engineer", 71000.00, 2),
+    (4, "Software Engineer", 48000.00, 2),
+    (5, "Accountant", 57000.00, 3),
+    (6, "Lawyer", 119000.00, 4),
+    (7, "Legal Team Lead", 141000, 4);
 
 INSERT INTO employee (id, first_name, last_name, role_id, manager_id)
 VALUES
-    (1, "Jeff", "Smith", 12, 22),
-    (2, "Sue", "Storm", 11, 21),
-    (3, "Diana", "McNary", 13, 23),
-    (4, "Eric", "Jameson", 14, 24);
+    (1, "Jeff", "Smith", 1, 1),
+    (2, "Sue", "Storm", 3, NULL),
+    (3, "Diana", "McNary", 13, NULL),
+    (4, "Eric", "Jameson", 14, NULL);
