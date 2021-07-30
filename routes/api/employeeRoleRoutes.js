@@ -1,4 +1,4 @@
-const express = require('express')
+const express = require('express');
 const router = express.Router();
 const db = require('../../config/connection');
 
@@ -50,9 +50,29 @@ router.post('/employee_role', ({ body }, res) => {
           data: body
         });
     });
-
 })
 
+// Update a role
+router.put('/employee_role/:id', (req, res) => {
+    const sql = `UPDATE employee_roles SET title = ? WHERE id = ?`;
+    const params = [req.body.title, req.params.id];
+
+    db.query(sql, params, (err, result) => {
+        if (err) {
+          res.status(400).json({ error: err.message });
+        } else if (!result.affectedRows) {
+          res.json({
+            message: 'Voter not found'
+          });
+        } else {
+          res.json({
+            message: 'success',
+            data: req.body,
+            changes: result.affectedRows
+          });
+        }
+    });
+})
 
 
 module.exports = router;
