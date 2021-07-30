@@ -17,8 +17,9 @@ VALUES
 
 INSERT INTO employees (first_name, last_name, role_id, manager_id)
 VALUES
-    ("Jeff", "Smith", 1, 1),
-    ("Sue", "Storm", 3, NULL),
-    ("Diana", "McNary", 6, NULL),
-    ("Eric", "Jameson", 4, NULL),
-    ("Christina", "Fuentes", 4, 1);
+-- Jeff Smith is the manager because he doesn't have a manager (NULL), 
+-- doesn't become a manager until his id is connected to another employee
+    ("Jeff", "Smith", 1, NULL),
+    ("Sue", "Storm", 2, 1),
+    ('Ronald', 'Firbank', 3, NULL);
+    

@@ -1,9 +1,9 @@
 const express = require('express');
-const router = express.Router();
+// const router = express.Router();
 const db = require('../../config/connection');
 
 // Get all the departments
-router.get('/department', (req, res) => {
+app.get('/department', (req, res) => {
     const sql = `SELECT * FROM departments`;
 
     db.query(sql, (err, rows) => {
@@ -18,7 +18,7 @@ router.get('/department', (req, res) => {
     });
 });
 
-router.get('/department/:id', (req, res) => {
+app.get('/department/:id', (req, res) => {
     const sql = `SELECT * FROM departments WHERE id = ?`;
     const params = [req.params.id];
 
@@ -35,7 +35,7 @@ router.get('/department/:id', (req, res) => {
 });
 
 // Create a department record
-router.post('/department', ({ body }, res) => {
+app.post('/department', ({ body }, res) => {
     const sql = `INSERT INTO departments (department_name) VALUE (?)`;
     
     db.query(sql, params, (err, result) => {

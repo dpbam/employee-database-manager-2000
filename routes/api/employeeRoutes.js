@@ -1,9 +1,9 @@
 const express = require('express');
-const router = express.Router();
+// const router = express.Router();
 const db = require('../../config/connection');
 
 // get all employees
-router.get('/employees', (req, res) => {
+app.get('/employees', (req, res) => {
     const sql = `SELECT employees.*, `;
 
     db.query(sql, (err, rows) => {
@@ -19,7 +19,7 @@ router.get('/employees', (req, res) => {
 });
 
 // Get single employee
-router.get('/employee/:id', (req, res) => {
+app.get('/employee/:id', (req, res) => {
     const sql = `SELECT employees.*, WHERE id = ?`;
     const params = [req.params.id];
 
@@ -36,7 +36,7 @@ router.get('/employee/:id', (req, res) => {
 });
 
 // Create an employee
-router.post('/employee', ({ body }, res) => {
+app.post('/employee', ({ body }, res) => {
     const sql = `INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)`; 
     const params = [
         body.first_name,
@@ -57,7 +57,7 @@ router.post('/employee', ({ body }, res) => {
 })
 
 // Update an employee's record
-router.put('/employee/:id', (req, res) => {
+app.put('/employee/:id', (req, res) => {
     const sql = `UPDATE employees SET (first_name, last_name) WHERE id = ?`;
     const params = [
       req.body.first_name, 
@@ -83,7 +83,7 @@ router.put('/employee/:id', (req, res) => {
     });
 })
 
-router.delete('/employee/:id', (req, res) => {
+app.delete('/employee/:id', (req, res) => {
     const sql = `DELETE FROM employees WHERE id = ?`;
 
     db.query(sql, req.params.id, (err, result) => {

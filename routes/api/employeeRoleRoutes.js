@@ -1,9 +1,9 @@
 const express = require('express');
-const router = express.Router();
+// const router = express.Router();
 const db = require('../../config/connection');
 
 // Get all employee roles
-router.get('/employee_roles', (req, res) => {
+app.get('/employee_roles', (req, res) => {
     const sql = `SELECT * FROM employee_roles`;
 
     db.query(sql, (err, rows) => {
@@ -19,7 +19,7 @@ router.get('/employee_roles', (req, res) => {
 });
 
 // Get one employee role
-router.get('/employee_role/:id', (req, res) => {
+app.get('/employee_role/:id', (req, res) => {
     const sql = `SELECT * FROM employee_role WHERE id = ?`;
     const params = [req.params.id];
 
@@ -36,7 +36,7 @@ router.get('/employee_role/:id', (req, res) => {
 });
 
 // Create a role
-router.post('/employee_role', ({ body }, res) => {
+app.post('/employee_role', ({ body }, res) => {
     const sql = `INSERT INTO employee-roles (title, salary, department_id) VALUES (?,?,?)`;
     const params = [body.title, body.salary, body.department_id];
 
@@ -53,7 +53,7 @@ router.post('/employee_role', ({ body }, res) => {
 })
 
 // Update a role
-router.put('/employee_role/:id', (req, res) => {
+app.put('/employee_role/:id', (req, res) => {
     const sql = `UPDATE employee_roles SET title = ? WHERE id = ?`;
     const params = [req.body.title, req.params.id];
 
