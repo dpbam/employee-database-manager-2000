@@ -1,10 +1,10 @@
-const express = require('express');
+// const express = require('express');
 // const routes = require('./routes');
 // const router = express.Router();
 const db = require('./config/connection');
-const app = express();
+// const app = express();
 const inquirer = require('inquirer');
-const PORT = process.env.PORT || 4001;
+// const PORT = process.env.PORT || 4001;
 
 // app.use(express.json());
 // app.use(express.urlencoded({ extended: false }));
@@ -13,15 +13,15 @@ const PORT = process.env.PORT || 4001;
 // app.use(routes);
 // app.use("/api", apiRoutes);
 
-app.get('/', (req, res) => {
-    res.json({
-        message: 'Hellooooo Wooooorld'
-    });
-});
+// app.get('/', (req, res) => {
+//     res.json({
+//         message: 'Hellooooo Wooooorld'
+//     });
+// });
 
-app.use((req,res) => {
-    res.status(404).end();
-});
+// app.use((req,res) => {
+//     res.status(404).end();
+// });
 
 function toDo () {
     inquirer.prompt({
@@ -29,19 +29,29 @@ function toDo () {
         name: 'toDo',
         message: 'What would you like to do?',
         choices: [
+            "View All Departments",
             "View All Employees",
+            "View All Roles",            
             // "View All Employees By Department",
             // "View All Employees By Manager",
+            "Add a Department",
+            "Add a Role",
             "Add Employee",
-            "Remove Employee",
+            // "Remove Employee",
             "Update Employee Role",
             "Update Employee Manager",
             "View All Roles"
         ]
     }) 
     .then(function (userInput) {
-        var query = "";
+        let query = "";
             switch(userInput.toDo) {
+                case "View All Departments":
+                    query = viewAllDepartments();
+                    break;
+                case "View All Roles":
+                    query = viewAllRoles();
+                    break;
                 case "View All Employees":
                     query = viewAllEmployees();
                     break;
@@ -51,6 +61,12 @@ function toDo () {
                 // case "View All Employees By Manager":
                 //     query = viewEmployeesByManager();
                 //     break;
+                case "Add a Department":
+                    query = addDepartment();
+                    break;
+                case "Add a Role":
+                    query = addRole();
+                    break;
                 case "Add Employee":
                     query = addEmployee();
                     break;
@@ -68,19 +84,35 @@ function toDo () {
                     break;
             }
 
-            if(query != "") {
-                db.query(query, function (err, res) {
-                    console.table(res);
-                });
-            }
+                // db.query(query, function (err, res) {
+                //     console.table(res);
+                // });
     });
 };
 
-toDo();
+function viewAllDepartments() {
+    let sql = `SELECT * FROM departments`
+    
+        db.query(sql, function (err, res) {
+            console.table(res);
+            toDo();
+        });
+}
 
 function viewAllEmployees() {
-    var allEmployeesQuery = `SELECT * FROM employees`
-    return allEmployeesQuery;   
+    let sql = `SELECT * FROM employees`
+        db.query(sql, function (err, res) {
+            console.table(res);
+            toDo();
+        });
+};
+
+function viewAllRoles() {
+    let sql = `SELECT title FROM employee_roles`
+    db.query(sql, function (err, res) {
+        console.table(res);
+        toDo();
+    });
 };
 
 // function viewEmployeeWithDepartment() {
@@ -97,32 +129,73 @@ function viewAllEmployees() {
 // function viewEmployeesByManager() {
 
 // }
+async function addDepartment() {
+    
+    const departmentAdd = await inquirer.prompt([
+        {
+            type: "input",
+            name: "department_name",
+            message: "What's the name of the department you'd like to add?"
+        }
+    ]);
+
+    db.query( 
+        `INSERT INTO departments SET ?`,
+        {           
+            department_name: departmentAdd.department_name 
+        },
+
+        function (err) {
+        if (err) throw err;
+        viewAllDepartments();
+        toDo();
+    });
+}
+
+async function addRole() {
+
+    const roleAdd = await inquirer.prompt([
+        {
+            type: "input",
+            name: "title",
+            message: "What's the name of the role you'd like to add?"
+        }
+    ]);
+
+    db.query( 
+        `INSERT INTO employee_roles SET ?`,
+        {           
+            title: roleAdd.title
+        },
+
+        function (err) {
+        if (err) throw err;
+        // viewAllRoles();
+        toDo();
+    });
+}
 
 function addEmployee() {
+    const employeeRoleTable = `SELECT * FROM employee_roles`
+    const employeesTable = `SELECT * FROM employees`
+    // const employeeManager = `SELECT manager_id FROM employees`
     inquirer.prompt([
         {
             type: "input",
-            name: "employeeFirstName",
+            name: "first_name",
             message: "What is the employee's first name?"
         },
         {
             type: "input",
-            name: "employeeLastName",
+            name: "last_name",
             message: "...and their last name?"
         },
         {
             type: "list",
-            name: "role",
+            name: "title",
             message: "What is the employee's role?",
-            choices: [
-                "Sales Lead",
-                "Salesperson",
-                "Lead Engineer",
-                "Software Engineer",
-                "Accountant",
-                "Lawyer",
-                "Legal Team Lead"
-            ]
+            choices: employeeRoleTable
+            
         },
         {
             type: "list",
@@ -135,10 +208,11 @@ function addEmployee() {
             ]
         }
     ])
-    var addEmployee = `
-    INSERT INTO employees
-    VALUES (first_name, last_name, role_id, manager_id)
-    SELECT * FROM employees`
+    // var addEmployee = `
+    // SELECT * FROM employees
+    // INSERT INTO employees
+    // VALUES (first_name, last_name, role_id, manager_id)
+    // `
 };
 
 // function removeEmployee() {
@@ -156,12 +230,13 @@ function addEmployee() {
 // }
 
 function updateEmployeeRole() {
+    let sql = `SELECT * FROM employees`
     inquirer.prompt([
         {
             type: "list",
             name: "chooseEmployee",
             message: "Which employee's role would you like to update?",
-            choices: [employees.first_name, employees.last_name]
+            choices: [employeeTable.first_name, employeeTable.last_name]
         },
         {
             type: "list",
@@ -178,26 +253,20 @@ function updateEmployeeRole() {
             ]
         }
     ])
-    var updateEmployeeRole = `
-    SELECT 
-    `
 }
 
-function updateEmployeeManager() {
-    var updateEmployeeManager = ``
-}
+// function updateEmployeeManager() {
+//     var updateEmployeeManager = `
+//     SELECT * FROM employees
+//     `
+// }
 
-function viewAllRoles() {
-    var allRoles = `SELECT * FROM employee_roles`
-    return allRoles;
-}
 
-viewAllEmployees();
-addEmployee();
+toDo();
 // removeEmployee();
 
 // turn on connection to db and server
-app.listen(PORT, () => {
-    console.log(`API server now on port ${PORT}!`);
-});
+// app.listen(PORT, () => {
+//     console.log(`API server now on port ${PORT}!`);
+// });
   
