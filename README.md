@@ -20,9 +20,7 @@ Clone the repo from GitHub, download Node.js, and inquirer.js, and express. npm 
 
 Use inquirer from the command line to answer questions.
 
-- View walk-thru here: 
-
-- Page screenshot here: 
+- View walk-thru here: https://drive.google.com/file/d/1hlhU-Aqg7rloItgiKE1kis9d1owMNVlq/view
 
 ## Contributing
 
@@ -34,4 +32,4 @@ Just run the app. Does it work?
 
 ## Questions
 
-Check my GitHub at 
+Check my GitHub at https://github.com/dpbam/employee-database-manager-2000
