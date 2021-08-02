@@ -1,27 +1,16 @@
-// const express = require('express');
-// const routes = require('./routes');
-// const router = express.Router();
 const db = require('./config/connection');
-// const app = express();
 const inquirer = require('inquirer');
-// const PORT = process.env.PORT || 4001;
 
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: false }));
-
-// turn on routes
-// app.use(routes);
-// app.use("/api", apiRoutes);
-
-// app.get('/', (req, res) => {
-//     res.json({
-//         message: 'Hellooooo Wooooorld'
-//     });
-// });
-
-// app.use((req,res) => {
-//     res.status(404).end();
-// });
+var figlet = require('figlet');
+ 
+figlet('Employee Manager 2000!!', function(err, data) {
+    if (err) {
+        console.log('Something went wrong...');
+        console.dir(err);
+        return;
+    }
+    console.log(data)
+});
 
 function toDo () {
     inquirer.prompt({
@@ -45,54 +34,49 @@ function toDo () {
     }) 
     .then(function (userInput) {
         let query = "";
-            switch(userInput.toDo) {
-                case "View All Departments":
-                    query = viewAllDepartments();
-                    break;
-                case "View All Roles":
-                    query = viewAllRoles();
-                    break;
-                case "View All Employees":
-                    query = viewAllEmployees();
-                    break;
-                // case "View All Employees By Department":
-                //     query = viewEmployeeWithDepartment();
-                //     break;
-                // case "View All Employees By Manager":
-                //     query = viewEmployeesByManager();
-                //     break;
-                case "Add a Department":
-                    query = addDepartment();
-                    break;
-                case "Add a Role":
-                    query = addRole();
-                    break;
-                case "Add Employee":
-                    query = addEmployee();
-                    break;
-                case "Remove Employee":
-                    query = removeEmployee();
-                    break;
-                case "Update Employee Role":
-                    query = updateEmployeeRole();
-                    break;
-                case "Update Employee Manager":
-                    query = updateEmployeeManager();
-                    break;
-                case "View All Roles":
-                    query = viewAllRoles();
-                    break;
-            }
-
-                // db.query(query, function (err, res) {
-                //     console.table(res);
-                // });
+        switch(userInput.toDo) {
+            case "View All Departments":
+                query = viewAllDepartments();
+                break;
+            case "View All Roles":
+                query = viewAllRoles();
+                break;
+            case "View All Employees":
+                query = viewAllEmployees();
+                break;
+            // case "View All Employees By Department":
+            //     query = viewEmployeeWithDepartment();
+            //     break;
+            // case "View All Employees By Manager":
+            //     query = viewEmployeesByManager();
+            //     break;
+            case "Add a Department":
+                query = addDepartment();
+                break;
+            case "Add a Role":
+                query = addRole();
+                break;
+            case "Add Employee":
+                query = addEmployee();
+                break;
+            case "Remove Employee":
+                query = removeEmployee();
+                break;
+            case "Update Employee Role":
+                query = updateEmployeeRole();
+                break;
+            case "Update Employee Manager":
+                query = updateEmployeeManager();
+                break;
+            case "View All Roles":
+                query = viewAllRoles();
+                break;
+        }
     });
 };
 
 function viewAllDepartments() {
     let sql = `SELECT * FROM departments`
-    
         db.query(sql, function (err, res) {
             console.table(res);
             toDo();
@@ -130,7 +114,6 @@ function viewAllRoles() {
 
 // }
 async function addDepartment() {
-    
     const departmentAdd = await inquirer.prompt([
         {
             type: "input",
@@ -153,33 +136,43 @@ async function addDepartment() {
 }
 
 async function addRole() {
-
     const roleAdd = await inquirer.prompt([
         {
             type: "input",
             name: "title",
             message: "What's the name of the role you'd like to add?"
+        },
+        {
+            type: "input",
+            name: "salary",
+            message: "What is this role's salary?"
+        },
+        {
+            type: "input",
+            name: "department_id",
+            message: "What is this role's department id?"
         }
     ]);
 
     db.query( 
         `INSERT INTO employee_roles SET ?`,
         {           
-            title: roleAdd.title
+            title: roleAdd.title, 
+            salary: roleAdd.salary, 
+            department_id: roleAdd.department_id
         },
 
         function (err) {
         if (err) throw err;
-        // viewAllRoles();
+        viewAllRoles();
         toDo();
     });
 }
 
-function addEmployee() {
+async function addEmployee() {
     const employeeRoleTable = `SELECT * FROM employee_roles`
     const employeesTable = `SELECT * FROM employees`
-    // const employeeManager = `SELECT manager_id FROM employees`
-    inquirer.prompt([
+    await inquirer.prompt([
         {
             type: "input",
             name: "first_name",
@@ -208,11 +201,6 @@ function addEmployee() {
             ]
         }
     ])
-    // var addEmployee = `
-    // SELECT * FROM employees
-    // INSERT INTO employees
-    // VALUES (first_name, last_name, role_id, manager_id)
-    // `
 };
 
 // function removeEmployee() {
@@ -230,13 +218,15 @@ function addEmployee() {
 // }
 
 function updateEmployeeRole() {
-    let sql = `SELECT * FROM employees`
+    let sql = `SELECT * FROM employees;`
+    let firstName = `SELECT first_name FROM employees;`
+    let lastName = `SELECT last_name FROM employees;`
     inquirer.prompt([
         {
             type: "list",
             name: "chooseEmployee",
             message: "Which employee's role would you like to update?",
-            choices: [employeeTable.first_name, employeeTable.last_name]
+            choices: [firstName, lastName]
         },
         {
             type: "list",
@@ -263,10 +253,5 @@ function updateEmployeeRole() {
 
 
 toDo();
-// removeEmployee();
 
-// turn on connection to db and server
-// app.listen(PORT, () => {
-//     console.log(`API server now on port ${PORT}!`);
-// });
   
